@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/jianhan/gopt/middleware"
 	"net/http"
 )
 
@@ -15,7 +16,7 @@ func NewUser() APIRouter {
 func (u *user) SetupSubrouter(parentRouter *mux.Router) {
 	r := parentRouter.PathPrefix("/user").Subrouter().StrictSlash(true)
 	r.HandleFunc("/profile", u.profile).Name("get.user.profile").Methods("GET")
-	r.Use(checkAuth)
+	r.Use(middleware.CheckAuth)
 }
 
 func (u *user) profile(rsp http.ResponseWriter, req *http.Request) {
