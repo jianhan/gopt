@@ -9,22 +9,20 @@ type Router interface {
 	GetRouter() (*mux.Router, error)
 }
 
-func NewRouter() (Router, error) {
-	negroni.Classic()
+func NewRouter(middlewares []negroni.Handler, apiRouters []APIRouter) (Router, error) {
 	r := &router{
 		router:           mux.NewRouter().StrictSlash(true),
-		apiRoutes:        mux.NewRouter().StrictSlash(true),
-		webRoutes:        mux.NewRouter().StrictSlash(true),
-		commonMiddleware: []negroni.Handler{negroni.NewRecovery(), negroni.NewLogger()},
+		commonMiddleware: middlewares,
+		apiRouters:       apiRouters,
 	}
+
 	return r.initAPIRoutes().initWebRoutes(), nil
 }
 
 type router struct {
 	router           *mux.Router
-	apiRoutes        *mux.Router
-	webRoutes        *mux.Router
 	commonMiddleware []negroni.Handler
+	apiRouters       []APIRouter
 }
 
 func (r *router) GetRouter() (*mux.Router, error) {
@@ -33,10 +31,11 @@ func (r *router) GetRouter() (*mux.Router, error) {
 
 func (r *router) initAPIRoutes() *router {
 	apiVersionSubrouter := mux.NewRouter().StrictSlash(true).PathPrefix("/api/v1").Subrouter()
-	// user sub router
-	u := &user{parentRouter: apiVersionSubrouter}
-	u.init()
 
+	// setup sub routes
+	for k := range r.apiRouters {
+		r.apiRouters[k].SetupSubrouter(apiVersionSubrouter)
+	}
 	r.router.PathPrefix("/api/v1").Handler(negroni.New(r.commonMiddleware...).With(
 		negroni.Wrap(apiVersionSubrouter),
 	))

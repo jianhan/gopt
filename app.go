@@ -5,6 +5,7 @@ import (
 	"github.com/caarlos0/env"
 	"github.com/jianhan/gopt/handler"
 	"github.com/joho/godotenv"
+	"github.com/urfave/negroni"
 	"log"
 	"net/http"
 	"time"
@@ -37,7 +38,11 @@ func (a *App) Run() error {
 	}
 
 	// get router from handler
-	r, err := handler.NewRouter()
+	// define middleware pass into it
+	r, err := handler.NewRouter(
+		[]negroni.Handler{negroni.NewRecovery(), negroni.NewLogger()},
+		[]handler.APIRouter{handler.NewUser()},
+	)
 	if err != nil {
 		log.Fatal(fmt.Errorf("unable to init router %v", err))
 		return err

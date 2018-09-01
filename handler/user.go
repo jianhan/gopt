@@ -6,11 +6,14 @@ import (
 )
 
 type user struct {
-	parentRouter *mux.Router
 }
 
-func (u *user) init() {
-	userSubrouter := u.parentRouter.PathPrefix("/user").Subrouter()
+func NewUser() APIRouter {
+	return &user{}
+}
+
+func (u *user) SetupSubrouter(parentRouter *mux.Router) {
+	userSubrouter := parentRouter.PathPrefix("/user").Subrouter()
 	userSubrouter.HandleFunc("/profile", u.profile).Name("get.user.profile").Methods("GET")
 }
 
