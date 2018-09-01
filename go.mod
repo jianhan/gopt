@@ -15,6 +15,7 @@ require (
 	github.com/spf13/jwalterweatherman v0.0.0-20180814060501-14d3d4c51834 // indirect
 	github.com/spf13/pflag v1.0.2 // indirect
 	github.com/spf13/viper v1.1.0
+	github.com/urfave/negroni v0.3.0
 	golang.org/x/crypto v0.0.0-20180830192347-182538f80094 // indirect
 	golang.org/x/sys v0.0.0-20180831094639-fa5fdf94c789 // indirect
 	golang.org/x/text v0.3.0 // indirect

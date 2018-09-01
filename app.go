@@ -5,11 +5,10 @@ import (
 	"github.com/caarlos0/env"
 	"github.com/jianhan/gopt/handler"
 	"github.com/joho/godotenv"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/urfave/negroni"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -52,11 +51,13 @@ func (a *App) Run() error {
 		return err
 	}
 	viper.ReadInConfig()
-	logrus.Info(viper.Get("ADDR"), "ADDR", os.Getenv("ADDR"))
+
+	n := negroni.Classic() // Includes some default middlewares
+	n.UseHandler(router)
 
 	// init server
 	srv := &http.Server{
-		Handler: router,
+		Handler: n,
 		Addr:    cfg.Addr,
 		// settings
 		WriteTimeout: time.Duration(cfg.WriteTimeout) * time.Second,
