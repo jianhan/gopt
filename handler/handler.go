@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+type APIRouter interface {
+	SetupSubrouter(*mux.Router)
+}
+
 type Router interface {
 	GetRouter() (*mux.Router, error)
 }
