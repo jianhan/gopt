@@ -25,4 +25,6 @@ func (r *router) GetRouter() (*mux.Router, error) {
 func (r *router) init() error {
 	u := &user{}
 	r.router.HandleFunc("/", u.profile)
+
+	return nil
 }
