@@ -1,3 +1,4 @@
 .idea/
 .godz.iml
 .env
+firebase_sdk_key.json

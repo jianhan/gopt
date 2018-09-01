@@ -5,6 +5,7 @@ import (
 	"github.com/caarlos0/env"
 	"github.com/jianhan/gopt/handler"
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 	"github.com/urfave/negroni"
 	"log"
 	"net/http"
@@ -57,7 +58,7 @@ func (a *App) Run() error {
 
 	// init server
 	srv := &http.Server{
-		Handler: router,
+		Handler: cors.Default().Handler(router),
 		Addr:    cfg.Addr,
 		// settings
 		WriteTimeout: time.Duration(cfg.WriteTimeout) * time.Second,
