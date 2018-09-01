@@ -5,8 +5,6 @@ import (
 	"github.com/caarlos0/env"
 	"github.com/jianhan/gopt/handler"
 	"github.com/joho/godotenv"
-	"github.com/spf13/viper"
-	"github.com/urfave/negroni"
 	"log"
 	"net/http"
 	"time"
@@ -23,6 +21,7 @@ type App struct {
 }
 
 func (a *App) Run() error {
+	// load env
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file", err)
@@ -50,14 +49,10 @@ func (a *App) Run() error {
 		log.Fatal(fmt.Errorf("unable to get router %v", err))
 		return err
 	}
-	viper.ReadInConfig()
-
-	n := negroni.Classic() // Includes some default middlewares
-	n.UseHandler(router)
 
 	// init server
 	srv := &http.Server{
-		Handler: n,
+		Handler: router,
 		Addr:    cfg.Addr,
 		// settings
 		WriteTimeout: time.Duration(cfg.WriteTimeout) * time.Second,
