@@ -32,17 +32,10 @@ func (r *router) GetRouter() (*mux.Router, error) {
 }
 
 func (r *router) initAPIRoutes() *router {
-
-	// user sub router
-	u := &user{}
 	apiVersionSubrouter := mux.NewRouter().StrictSlash(true).PathPrefix("/api/v1").Subrouter()
-
-	userSubrouter := apiVersionSubrouter.PathPrefix("/user").Subrouter()
-	userSubrouter.HandleFunc("/profile", u.profile).Name("get.user.profile").Methods("GET")
-
-	////r.router.HandleFunc("/profile", u.profile)
-	//userRouter := mux.NewRouter().PathPrefix("/api/v1").Subrouter().StrictSlash(true)
-	//userRouter.Handle("/", userSubrouter)
+	// user sub router
+	u := &user{parentRouter: apiVersionSubrouter}
+	u.init()
 
 	r.router.PathPrefix("/api/v1").Handler(negroni.New(r.commonMiddleware...).With(
 		negroni.Wrap(apiVersionSubrouter),
