@@ -2,30 +2,41 @@ package main
 
 import (
 	"fmt"
-	"github.com/jianhan/gopt/config"
-	"github.com/jianhan/gopt/handler"
-	"github.com/joho/godotenv"
-	"github.com/rs/cors"
-	"github.com/urfave/negroni"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/didip/tollbooth"
+	"github.com/didip/tollbooth_negroni"
+	"github.com/jianhan/gopt/config"
+	"github.com/jianhan/gopt/handler"
+
+	"github.com/rs/cors"
+	"github.com/urfave/negroni"
 )
 
 type App struct {
 }
 
 func (a *App) Run() error {
+	// create a limiter struct.
+	limiter := tollbooth.NewLimiter(10000, nil)
+
 	// load env
 	envConfigs, err := config.EnvConfigs()
 	if err != nil {
 		panic(err)
 	}
+	// Create a limiter struct.
 
 	// get router from handler
 	// define middleware pass into it
 	r, err := handler.NewRouter(
-		[]negroni.Handler{negroni.NewRecovery(), negroni.NewLogger()},
+		[]negroni.Handler{
+			negroni.NewRecovery(),
+			negroni.NewLogger(),
+			tollbooth_negroni.LimitHandler(limiter),
+		},
 		[]handler.APIRouter{handler.NewUser()},
 	)
 	if err != nil {
@@ -52,13 +63,4 @@ func (a *App) Run() error {
 	log.Fatal(srv.ListenAndServe())
 
 	return nil
-}
-
-// init handles app configs ,etc... before boot
-func init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file", err)
-		panic(err)
-	}
 }
