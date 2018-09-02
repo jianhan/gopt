@@ -15,6 +15,7 @@ require (
 	github.com/mholt/binding v0.3.0 // indirect
 	github.com/mitchellh/mapstructure v1.0.0 // indirect
 	github.com/pelletier/go-toml v1.2.0 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rs/cors v1.5.0
 	github.com/sirupsen/logrus v1.0.6
 	github.com/spf13/afero v1.1.1 // indirect
@@ -22,6 +23,7 @@ require (
 	github.com/spf13/jwalterweatherman v0.0.0-20180814060501-14d3d4c51834 // indirect
 	github.com/spf13/pflag v1.0.2 // indirect
 	github.com/spf13/viper v1.1.0
+	github.com/stretchr/testify v1.2.2 // indirect
 	github.com/unrolled/render v0.0.0-20180807193321-4206df6ff701
 	github.com/urfave/negroni v0.3.0
 	go.opencensus.io v0.15.0 // indirect
@@ -33,5 +35,7 @@ require (
 	google.golang.org/api v0.0.0-20180831000444-b810576d88a0
 	google.golang.org/genproto v0.0.0-20180831171423-11092d34479b // indirect
 	google.golang.org/grpc v1.14.0 // indirect
+	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
+	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect
 )

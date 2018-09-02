@@ -8,5 +8,5 @@ type HttpError struct {
 }
 
 func (h *HttpError) Error() string {
-	return fmt.Sprintf("http error (%d): %s", h.Message, h.Status)
+	return fmt.Sprintf("http error (%s): %d", h.Message, h.Status)
 }

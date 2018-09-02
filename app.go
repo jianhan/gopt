@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/caarlos0/env"
+	"github.com/jianhan/gopt/config"
 	"github.com/jianhan/gopt/handler"
 	"github.com/joho/godotenv"
 	"github.com/rs/cors"
@@ -12,30 +12,14 @@ import (
 	"time"
 )
 
-type config struct {
-	Addr         string `env:"ADDR"`
-	WriteTimeout int    `env:"WRITE_TIMEOUT" envDefault:"15"`
-	ReadTimeout  int    `env:"READ_TIMEOUT" envDefault:"15"`
-	IdleTimeout  int    `env:"IDLE_TIMEOUT" envDefault:"15"`
-}
-
 type App struct {
 }
 
 func (a *App) Run() error {
 	// load env
-	err := godotenv.Load()
+	envConfigs, err := config.EnvConfigs()
 	if err != nil {
-		log.Fatal("Error loading .env file", err)
-		return err
-	}
-
-	// get configs
-	cfg := config{}
-	err = env.Parse(&cfg)
-	if err != nil {
-		log.Fatal(fmt.Errorf("unable to parse configs \n %+v", err))
-		return err
+		panic(err)
 	}
 
 	// get router from handler
@@ -59,11 +43,11 @@ func (a *App) Run() error {
 	// init server
 	srv := &http.Server{
 		Handler: cors.Default().Handler(router),
-		Addr:    cfg.Addr,
+		Addr:    envConfigs.Address(),
 		// settings
-		WriteTimeout: time.Duration(cfg.WriteTimeout) * time.Second,
-		ReadTimeout:  time.Duration(cfg.ReadTimeout) * time.Second,
-		IdleTimeout:  time.Duration(cfg.IdleTimeout) * time.Second,
+		WriteTimeout: time.Duration(envConfigs.WriteTimeout) * time.Second,
+		ReadTimeout:  time.Duration(envConfigs.ReadTimeout) * time.Second,
+		IdleTimeout:  time.Duration(envConfigs.IdleTimeout) * time.Second,
 	}
 	log.Fatal(srv.ListenAndServe())
 
