@@ -27,7 +27,6 @@ func (a *App) Run() error {
 	if err != nil {
 		panic(err)
 	}
-	// Create a limiter struct.
 
 	// get router from handler
 	// define middleware pass into it
@@ -52,8 +51,18 @@ func (a *App) Run() error {
 	}
 
 	// init server
+	var debug bool
+	if envConfigs.Environment == "development" {
+		debug = true
+	}
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:8080"},
+		AllowCredentials: true,
+		Debug: debug,
+	})
+	
 	srv := &http.Server{
-		Handler: cors.Default().Handler(router),
+		Handler: c.Handler(router),
 		Addr:    envConfigs.Address(),
 		// settings
 		WriteTimeout: time.Duration(envConfigs.WriteTimeout) * time.Second,

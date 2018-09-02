@@ -2,10 +2,11 @@ package config
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/caarlos0/env"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
-	"log"
 )
 
 func init() {
@@ -17,6 +18,7 @@ func init() {
 }
 
 type Env struct {
+	Environment  string `env:"ENVIRONMENT" envDefault:"development"`
 	Host         string `env:"HOST" envDefault:"127.0.0.1"`
 	Port         int    `env:"PORT" envDefault:"8888"`
 	WriteTimeout int    `env:"WRITE_TIMEOUT" envDefault:"15"`
