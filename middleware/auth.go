@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"context"
+	"net/http"
+	"strings"
+
 	"github.com/jianhan/gopt/firebase"
 	ghttp "github.com/jianhan/gopt/http"
 	"github.com/sirupsen/logrus"
-	"net/http"
-	"strings"
 )
 
 func CheckAuth(next http.Handler) http.Handler {
@@ -40,9 +41,10 @@ func CheckAuth(next http.Handler) http.Handler {
 			return
 		}
 
+		// get user
 		user, err := client.VerifyIDToken(r.Context(), idToken)
 		if err != nil {
-			logrus.Errorf("error verifying ID token", err, idToken)
+			logrus.Errorf("error verifying ID token, %v: %s", err, idToken)
 			ghttp.SendJSONResponse(w, http.StatusInternalServerError, ghttp.HttpError{Status: http.StatusInternalServerError, Message: "Unable to verify token"})
 			return
 		}

@@ -58,6 +58,7 @@ func (a *App) Run() error {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:8080"},
 		AllowCredentials: true,
+		AllowedHeaders: []string{"Authorization"},
 		Debug: debug,
 	})
 	
