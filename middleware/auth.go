@@ -28,7 +28,7 @@ func CheckAuth(next http.Handler) http.Handler {
 		}
 
 		// get firebase app
-		firebaseApp, err := firebase.FirebaseApp()
+		firebaseApp, err := firebase.NewFirebaseApp()
 		if err != nil {
 			ghttp.SendJSONResponse(w, http.StatusInternalServerError, ghttp.HttpError{Status: http.StatusInternalServerError, Message: "Internal server error, unable to authenticate user"})
 			return
