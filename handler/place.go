@@ -9,7 +9,7 @@ type place struct {
 }
 
 func NewPlace() APIRouter {
-	return &user{}
+	return &place{}
 }
 
 func (p *place) SetupSubrouter(parentRouter *mux.Router) {
