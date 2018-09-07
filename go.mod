@@ -8,11 +8,14 @@ require (
 	github.com/didip/tollbooth v4.0.0+incompatible
 	github.com/didip/tollbooth_negroni v0.0.0-20170928042109-a4e3efc33255
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
+	github.com/fzipp/gocyclo v0.0.0-20150627053110-6acd4345c835 // indirect
 	github.com/golang/protobuf v1.2.0 // indirect
+	github.com/google/uuid v1.0.0 // indirect
 	github.com/googleapis/gax-go v2.0.0+incompatible // indirect
 	github.com/gorilla/mux v1.6.2
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/joho/godotenv v1.2.0
+	github.com/kisielk/errcheck v1.1.0 // indirect
 	github.com/magiconair/properties v1.8.0 // indirect
 	github.com/mholt/binding v0.3.0 // indirect
 	github.com/mitchellh/mapstructure v1.0.0 // indirect
@@ -36,9 +39,11 @@ require (
 	golang.org/x/sys v0.0.0-20180831094639-fa5fdf94c789 // indirect
 	golang.org/x/text v0.3.0 // indirect
 	golang.org/x/time v0.0.0-20180412165947-fbb02b2291d2 // indirect
+	golang.org/x/tools v0.0.0-20180831211245-7ca132754999 // indirect
 	google.golang.org/api v0.0.0-20180831000444-b810576d88a0
 	google.golang.org/genproto v0.0.0-20180831171423-11092d34479b // indirect
 	google.golang.org/grpc v1.14.0 // indirect
+	googlemaps.github.io/maps v0.0.0-20180903024753-bc340667705e
 	gopkg.in/airbrake/gobrake.v2 v2.0.9 // indirect
 	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect
