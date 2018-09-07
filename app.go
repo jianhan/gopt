@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/jianhan/gopt/middleware"
+	"github.com/jianhan/gopt/place"
 	"log"
 	"net/http"
 	"time"
@@ -20,6 +21,11 @@ type App struct {
 }
 
 func (a *App) Run() error {
+	googleClient, err := place.GetClient()
+	if err != nil {
+		panic(err)
+	}
+
 	// create a limiter struct.
 	limiter := tollbooth.NewLimiter(10000, nil)
 
@@ -40,7 +46,7 @@ func (a *App) Run() error {
 		},
 		[]handler.APIRouter{
 			handler.NewUser(),
-			handler.NewPlace(),
+			handler.NewPlace(googleClient),
 		},
 	)
 	if err != nil {
