@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/jianhan/gopt/middleware"
 	"log"
 	"net/http"
 	"time"
@@ -34,9 +35,13 @@ func (a *App) Run() error {
 		[]negroni.Handler{
 			negroni.NewRecovery(),
 			negroni.NewLogger(),
+			negroni.HandlerFunc(middleware.JSONRspHeader),
 			tollbooth_negroni.LimitHandler(limiter),
 		},
-		[]handler.APIRouter{handler.NewUser()},
+		[]handler.APIRouter{
+			handler.NewUser(),
+			handler.NewPlace(),
+		},
 	)
 	if err != nil {
 		log.Fatal(fmt.Errorf("unable to init router %v", err))
@@ -58,10 +63,10 @@ func (a *App) Run() error {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:8080"},
 		AllowCredentials: true,
-		AllowedHeaders: []string{"Authorization"},
-		Debug: debug,
+		AllowedHeaders:   []string{"Authorization"},
+		Debug:            debug,
 	})
-	
+
 	srv := &http.Server{
 		Handler: c.Handler(router),
 		Addr:    envConfigs.Address(),
