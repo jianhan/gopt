@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/allegro/bigcache"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -16,7 +17,7 @@ func NewZomatoPlace(cache *bigcache.BigCache) APIRouter {
 
 func (z *zomato) SetupSubrouter(parentRouter *mux.Router) {
 	r := parentRouter.PathPrefix("/zomato").Subrouter().StrictSlash(true)
-	r.HandleFunc("/search", z.search).Name("get.zomato.search").Methods("GET")
+	r.HandleFunc("/search", z.search).Name(fmt.Sprintf("get.zomato.search")).Methods("GET")
 	r.HandleFunc("/collections", z.collections).Name("get.zomato.collections").Methods("GET")
 	r.HandleFunc("/categories", z.categories).Name("get.zomato.categories").Methods("GET")
 	r.HandleFunc("/reviews", z.reviews).Name("get.zomato.reviews").Methods("GET")
