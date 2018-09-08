@@ -14,7 +14,7 @@ type base struct {
 }
 
 type CommonAPI interface {
-	Categories() (*CategoryResponse, error)
+	Categories() ([]*Category, error)
 	Cities() ([]*City, error)
 }
 
@@ -26,7 +26,7 @@ func NewCommonAPI() CommonAPI {
 	return &commonAPI{base: base{apiBaseURL: os.Getenv("ZOMATO_API_URL")}}
 }
 
-func (c *commonAPI) Categories() (*CategoryResponse, error) {
+func (c *commonAPI) Categories() ([]*Category, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/categories", os.Getenv("ZOMATO_API_URL")), nil)
 	if err != nil {
@@ -51,7 +51,11 @@ func (c *commonAPI) Categories() (*CategoryResponse, error) {
 		return nil, err
 	}
 
-	return &categoryResponse, nil
+	categories := []*Category{}
+	for _, v := range categoryResponse.Categories {
+		categories = append(categories, &Category{ID: v.Categories.ID, Name: v.Categories.Name})
+	}
+	return categories, nil
 }
 
 func (c *commonAPI) Cities() ([]*City, error) {

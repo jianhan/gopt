@@ -10,12 +10,12 @@ type CategoryResponse struct {
 }
 
 type Category struct {
-	CategoryID   string `json:"category_id"`
-	CategoryName string `json:"category_name"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 type City struct {
-	ID          string `json:"id"`
+	ID          int    `json:"id"`
 	Name        string `json:"name"`
 	CountryID   string `json:"country_id"`
 	CountryName string `json:"country_name"`

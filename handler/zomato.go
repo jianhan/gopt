@@ -5,6 +5,7 @@ import (
 	"github.com/allegro/bigcache"
 	"github.com/gorilla/mux"
 	gzomato "github.com/jianhan/gopt/zomato"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -37,9 +38,12 @@ func (z *zomato) collections(rsp http.ResponseWriter, req *http.Request) {
 }
 
 func (z *zomato) categories(rsp http.ResponseWriter, req *http.Request) {
-	_, err := z.commonAPI.Categories()
+	categories, err := z.commonAPI.Categories()
 	if err != nil {
 		panic(err)
+	}
+	for _, v := range categories {
+		logrus.Info(v.Name)
 	}
 }
 
