@@ -5,7 +5,7 @@ import (
 	"github.com/allegro/bigcache"
 	"github.com/jianhan/gopt/middleware"
 	"github.com/jianhan/gopt/place"
-	"github.com/sirupsen/logrus"
+	"github.com/jianhan/gopt/zomato"
 	"log"
 	"net/http"
 	"time"
@@ -55,7 +55,7 @@ func (a *App) Run() error {
 		[]handler.APIRouter{
 			handler.NewUser(),
 			handler.NewGooglePlace(googleClient, cache),
-			handler.NewZomatoPlace(cache),
+			handler.NewZomatoPlace(cache, zomato.NewCommonAPI()),
 		},
 	)
 	if err != nil {
@@ -81,9 +81,9 @@ func (a *App) Run() error {
 		AllowedHeaders:   []string{"Authorization"},
 		Debug:            debug,
 	})
-	logrus.Info(c)
+
 	srv := &http.Server{
-		Handler: router,
+		Handler: c.Handler(router),
 		Addr:    envConfigs.Address(),
 		// settings
 		WriteTimeout: time.Duration(envConfigs.WriteTimeout) * time.Second,

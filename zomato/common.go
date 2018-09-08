@@ -1,7 +1,12 @@
 package zomato
 
-type Categories struct {
-	Categories []Category `json:"categories"`
+type CategoryResponse struct {
+	Categories []struct {
+		Categories struct {
+			ID   int    `json:"id"`
+			Name string `json:"name"`
+		} `json:"categories"`
+	} `json:"categories"`
 }
 
 type Category struct {

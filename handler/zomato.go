@@ -4,15 +4,17 @@ import (
 	"fmt"
 	"github.com/allegro/bigcache"
 	"github.com/gorilla/mux"
+	gzomato "github.com/jianhan/gopt/zomato"
 	"net/http"
 )
 
 type zomato struct {
-	cache *bigcache.BigCache
+	cache     *bigcache.BigCache
+	commonAPI gzomato.CommonAPI
 }
 
-func NewZomatoPlace(cache *bigcache.BigCache) APIRouter {
-	return &zomato{cache: cache}
+func NewZomatoPlace(cache *bigcache.BigCache, commonAPI gzomato.CommonAPI) APIRouter {
+	return &zomato{cache: cache, commonAPI: commonAPI}
 }
 
 func (z *zomato) SetupSubrouter(parentRouter *mux.Router) {
@@ -35,7 +37,10 @@ func (z *zomato) collections(rsp http.ResponseWriter, req *http.Request) {
 }
 
 func (z *zomato) categories(rsp http.ResponseWriter, req *http.Request) {
-
+	_, err := z.commonAPI.Categories()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (z *zomato) reviews(rsp http.ResponseWriter, req *http.Request) {
