@@ -16,6 +16,7 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/joho/godotenv v1.2.0
 	github.com/kisielk/errcheck v1.1.0 // indirect
+	github.com/kr/pretty v0.1.0 // indirect
 	github.com/magiconair/properties v1.8.0 // indirect
 	github.com/mholt/binding v0.3.0 // indirect
 	github.com/mitchellh/mapstructure v1.0.0 // indirect

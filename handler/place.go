@@ -22,12 +22,12 @@ func (p *place) SetupSubrouter(parentRouter *mux.Router) {
 
 func (p *place) search(rsp http.ResponseWriter, req *http.Request) {
 	findPlaceReq := &maps.FindPlaceFromTextRequest{
-		Input:              "hanachi",
-		InputType:          maps.FindPlaceFromTextInputTypeTextQuery,
-		LocationBiasCenter: &maps.LatLng{Lat: -27.469770, Lng: 153.025131},
-		LocationBiasRadius: 500,
+		Input:     "Museum of Contemporary Art Australia",
+		InputType: maps.FindPlaceFromTextInputTypeTextQuery,
 	}
-	prsp, err := p.client.FindPlaceFromText(req.Context(), findPlaceReq)
-	logrus.Info(prsp, err)
+	prsp, _ := p.client.FindPlaceFromText(req.Context(), findPlaceReq)
+	for k := range prsp.Candidates {
+		logrus.Info(prsp.Candidates[k].Name, "***********")
+	}
 	rsp.Write([]byte("tset SEARCH"))
 }

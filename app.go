@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jianhan/gopt/middleware"
 	"github.com/jianhan/gopt/place"
+	"github.com/sirupsen/logrus"
 	"log"
 	"net/http"
 	"time"
@@ -67,14 +68,14 @@ func (a *App) Run() error {
 		debug = true
 	}
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:8080"},
+		AllowedOrigins:   []string{"http://localhost:8080", "http://localhost:8080"},
 		AllowCredentials: true,
 		AllowedHeaders:   []string{"Authorization"},
 		Debug:            debug,
 	})
-
+	logrus.Info(c)
 	srv := &http.Server{
-		Handler: c.Handler(router),
+		Handler: router,
 		Addr:    envConfigs.Address(),
 		// settings
 		WriteTimeout: time.Duration(envConfigs.WriteTimeout) * time.Second,
