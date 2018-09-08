@@ -1,7 +1,6 @@
 package place
 
 import (
-	"errors"
 	"fmt"
 	"github.com/asaskevich/govalidator"
 	ghttp "github.com/jianhan/gopt/http"
@@ -12,12 +11,23 @@ import (
 
 const MaxRadius = 50000
 
-type NearbySearchRequestOption func(*maps.NearbySearchRequest) error
+type NearbySearchRequestOption func(*maps.NearbySearchRequest) *ghttp.HttpError
+
+func NewNearbySearchRequest(opts ...NearbySearchRequestOption) (*maps.NearbySearchRequest, *ghttp.HttpError) {
+	r := &maps.NearbySearchRequest{}
+	for _, opt := range opts {
+		if err := opt(r); err != nil {
+			return nil, err
+		}
+	}
+
+	return r, nil
+}
 
 type NearbySearchRequestOptions struct {
 }
 
-func (n NearbySearchRequestOptions) parsePriceLevel(fieldName, priceLevel string) (maps.PriceLevel, error) {
+func (n NearbySearchRequestOptions) parsePriceLevel(fieldName, priceLevel string) (maps.PriceLevel, *ghttp.HttpError) {
 	switch priceLevel {
 	case "0":
 		return maps.PriceLevelFree, nil
@@ -38,7 +48,7 @@ func (n NearbySearchRequestOptions) parsePriceLevel(fieldName, priceLevel string
 }
 
 func (n NearbySearchRequestOptions) Raidus(radius uint) NearbySearchRequestOption {
-	return func(args *maps.NearbySearchRequest) error {
+	return func(args *maps.NearbySearchRequest) *ghttp.HttpError {
 		if !govalidator.InRange(radius, 1, MaxRadius) {
 			return &ghttp.HttpError{
 				Message: fmt.Sprintf("invalid radius parameter, must be greater than 1 and less than %d", MaxRadius),
@@ -52,10 +62,13 @@ func (n NearbySearchRequestOptions) Raidus(radius uint) NearbySearchRequestOptio
 }
 
 func (n NearbySearchRequestOptions) Location(location string) NearbySearchRequestOption {
-	return func(args *maps.NearbySearchRequest) error {
+	return func(args *maps.NearbySearchRequest) *ghttp.HttpError {
 		latLng, err := maps.ParseLatLng(location)
 		if err != nil {
-			return err
+			return &ghttp.HttpError{
+				Message: fmt.Sprintf("unable to parse lat and lng, %s", err.Error()),
+				Status:  http.StatusBadRequest,
+			}
 		}
 		args.Location = &latLng
 
@@ -64,7 +77,7 @@ func (n NearbySearchRequestOptions) Location(location string) NearbySearchReques
 }
 
 func (n NearbySearchRequestOptions) Keyword(keyword string) NearbySearchRequestOption {
-	return func(args *maps.NearbySearchRequest) error {
+	return func(args *maps.NearbySearchRequest) *ghttp.HttpError {
 		if strings.Trim(keyword, " ") == "" {
 			return &ghttp.HttpError{
 				Message: "keyword can not be empty",
@@ -78,7 +91,7 @@ func (n NearbySearchRequestOptions) Keyword(keyword string) NearbySearchRequestO
 }
 
 func (n NearbySearchRequestOptions) Language(language string) NearbySearchRequestOption {
-	return func(args *maps.NearbySearchRequest) error {
+	return func(args *maps.NearbySearchRequest) *ghttp.HttpError {
 		if strings.Trim(language, " ") == "" {
 			return &ghttp.HttpError{
 				Message: "language can not be empty",
@@ -92,7 +105,7 @@ func (n NearbySearchRequestOptions) Language(language string) NearbySearchReques
 }
 
 func (n NearbySearchRequestOptions) MinPrice(minPrice string) NearbySearchRequestOption {
-	return func(args *maps.NearbySearchRequest) (err error) {
+	return func(args *maps.NearbySearchRequest) (err *ghttp.HttpError) {
 		if args.MinPrice, err = n.parsePriceLevel("min price", minPrice); err != nil {
 			return err
 		}
@@ -102,7 +115,7 @@ func (n NearbySearchRequestOptions) MinPrice(minPrice string) NearbySearchReques
 }
 
 func (n NearbySearchRequestOptions) MaxPrice(maxPrice string) NearbySearchRequestOption {
-	return func(args *maps.NearbySearchRequest) (err error) {
+	return func(args *maps.NearbySearchRequest) (err *ghttp.HttpError) {
 		if args.MaxPrice, err = n.parsePriceLevel("max price", maxPrice); err != nil {
 			return err
 		}
@@ -112,7 +125,7 @@ func (n NearbySearchRequestOptions) MaxPrice(maxPrice string) NearbySearchReques
 }
 
 func (n NearbySearchRequestOptions) Name(name string) NearbySearchRequestOption {
-	return func(args *maps.NearbySearchRequest) error {
+	return func(args *maps.NearbySearchRequest) *ghttp.HttpError {
 		if strings.Trim(name, " ") == "" {
 			return &ghttp.HttpError{
 				Message: "name can not be empty",
@@ -127,21 +140,24 @@ func (n NearbySearchRequestOptions) Name(name string) NearbySearchRequestOption 
 }
 
 func (n NearbySearchRequestOptions) OpenNow(openNow bool) NearbySearchRequestOption {
-	return func(args *maps.NearbySearchRequest) error {
+	return func(args *maps.NearbySearchRequest) *ghttp.HttpError {
 		args.OpenNow = openNow
 		return nil
 	}
 }
 
 func (n NearbySearchRequestOptions) RankBy(rankBy string) NearbySearchRequestOption {
-	return func(args *maps.NearbySearchRequest) error {
+	return func(args *maps.NearbySearchRequest) *ghttp.HttpError {
 		switch rankBy {
 		case "prominence":
 			args.RankBy = maps.RankByProminence
 		case "distance":
 			args.RankBy = maps.RankByDistance
 		default:
-			return errors.New(fmt.Sprintf("Unknown rank by: \"%v\"", rankBy))
+			return &ghttp.HttpError{
+				Message: fmt.Sprintf("unknown rank by: \"%v\"", rankBy),
+				Status:  http.StatusBadRequest,
+			}
 		}
 
 		return nil
@@ -149,17 +165,22 @@ func (n NearbySearchRequestOptions) RankBy(rankBy string) NearbySearchRequestOpt
 }
 
 func (n NearbySearchRequestOptions) Type(placeType string) NearbySearchRequestOption {
-	return func(args *maps.NearbySearchRequest) (err error) {
-		if args.Type, err = maps.ParsePlaceType(placeType); err != nil {
-			return err
+	return func(args *maps.NearbySearchRequest) *ghttp.HttpError {
+		t, tErr := maps.ParsePlaceType(placeType)
+		if tErr != nil {
+			return &ghttp.HttpError{
+				Message: fmt.Sprintf("unable to parse place type: %s", tErr.Error()),
+				Status:  http.StatusBadRequest,
+			}
 		}
+		args.Type = t
 
 		return nil
 	}
 }
 
 func (n NearbySearchRequestOptions) PageToken(pageToken string) NearbySearchRequestOption {
-	return func(args *maps.NearbySearchRequest) error {
+	return func(args *maps.NearbySearchRequest) *ghttp.HttpError {
 		if strings.Trim(pageToken, " ") == "" {
 			return &ghttp.HttpError{
 				Message: "page token can not be empty",

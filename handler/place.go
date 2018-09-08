@@ -2,7 +2,8 @@ package handler
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
+	ghttp "github.com/jianhan/gopt/http"
+	gplace "github.com/jianhan/gopt/place"
 	"googlemaps.github.io/maps"
 	"net/http"
 )
@@ -21,13 +22,24 @@ func (p *place) SetupSubrouter(parentRouter *mux.Router) {
 }
 
 func (p *place) search(rsp http.ResponseWriter, req *http.Request) {
-	findPlaceReq := &maps.FindPlaceFromTextRequest{
-		Input:     "Museum of Contemporary Art Australia",
-		InputType: maps.FindPlaceFromTextInputTypeTextQuery,
+	//findPlaceReq := &maps.FindPlaceFromTextRequest{
+	//	Input:     "Museum of Contemporary Art Australia",
+	//	InputType: maps.FindPlaceFromTextInputTypeTextQuery,
+	//}
+	//prsp, _ := p.client.FindPlaceFromText(req.Context(), findPlaceReq)
+	//for k := range prsp.Candidates {
+	//	logrus.Info(prsp.Candidates[k].Name, "***********")
+	//}
+
+	//resp, err := place.Get
+	//NearbySearch(context.Background(), r)
+	client, err := gplace.GetClient()
+	if err != nil {
+		ghttp.SendJSONResponse(rsp, http.StatusInternalServerError, ghttp.HttpError{Message: "unable to get google place client", Status: http.StatusInternalServerError})
+		return
 	}
-	prsp, _ := p.client.FindPlaceFromText(req.Context(), findPlaceReq)
-	for k := range prsp.Candidates {
-		logrus.Info(prsp.Candidates[k].Name, "***********")
-	}
-	rsp.Write([]byte("tset SEARCH"))
+
+	r := &maps.NearbySearchRequest{}
+
+	client.NearbySearch(req.Context())
 }
