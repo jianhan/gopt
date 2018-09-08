@@ -1,5 +1,9 @@
 package zomato
 
+type Categories struct {
+	Categories []Category `json:"categories"`
+}
+
 type Category struct {
 	CategoryID   string `json:"category_id"`
 	CategoryName string `json:"category_name"`
