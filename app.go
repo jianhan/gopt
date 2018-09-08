@@ -54,7 +54,8 @@ func (a *App) Run() error {
 		},
 		[]handler.APIRouter{
 			handler.NewUser(),
-			handler.NewPlace(googleClient, cache),
+			handler.NewGooglePlace(googleClient, cache),
+			handler.NewZomatoPlace(cache),
 		},
 	)
 	if err != nil {

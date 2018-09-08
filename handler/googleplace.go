@@ -14,18 +14,18 @@ import (
 	"net/http"
 )
 
-type place struct {
+type googlePlace struct {
 	client *maps.Client
 	cache  *bigcache.BigCache
 }
 
-func NewPlace(client *maps.Client, cache *bigcache.BigCache) APIRouter {
-	return &place{client: client, cache: cache}
+func NewGooglePlace(client *maps.Client, cache *bigcache.BigCache) APIRouter {
+	return &googlePlace{client: client, cache: cache}
 }
 
-func (p *place) SetupSubrouter(parentRouter *mux.Router) {
-	r := parentRouter.PathPrefix("/place").Subrouter().StrictSlash(true)
-	r.HandleFunc("/google", p.google).Name("get.place.google").Methods("GET")
+func (p *googlePlace) SetupSubrouter(parentRouter *mux.Router) {
+	r := parentRouter.PathPrefix("/google").Subrouter().StrictSlash(true)
+	r.HandleFunc("/nearby-search", p.nearbySearch).Name("get.place.nearby-search").Methods("GET")
 }
 
 type GoogleSearchRequest struct {
@@ -89,7 +89,7 @@ func (s *GoogleSearchRequest) GenerateNearBySearchRequestOptions() ([]gplace.Nea
 	return options
 }
 
-func (p *place) google(rsp http.ResponseWriter, req *http.Request) {
+func (p *googlePlace) nearbySearch(rsp http.ResponseWriter, req *http.Request) {
 	searchRequest := new(GoogleSearchRequest)
 	schema.NewDecoder().Decode(searchRequest, req.URL.Query())
 	conform.Strings(&searchRequest)
