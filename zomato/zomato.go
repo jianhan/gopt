@@ -55,6 +55,7 @@ func (c *commonAPI) Categories() ([]*Category, error) {
 	for _, v := range categoryResponse.Categories {
 		categories = append(categories, &Category{ID: v.Categories.ID, Name: v.Categories.Name})
 	}
+
 	return categories, nil
 }
 

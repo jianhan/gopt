@@ -38,7 +38,7 @@ func (a *App) Run() error {
 	}
 
 	// setup cache
-	cache, cErr := bigcache.NewBigCache(bigcache.DefaultConfig(10 * time.Minute))
+	cache, cErr := bigcache.NewBigCache(bigcache.DefaultConfig(60 * time.Minute))
 	if cErr != nil {
 		panic(cErr)
 	}
