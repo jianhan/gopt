@@ -4,6 +4,7 @@ require (
 	cloud.google.com/go v0.26.0 // indirect
 	contrib.go.opencensus.io/exporter/stackdriver v0.6.0 // indirect
 	firebase.google.com/go v3.3.0+incompatible
+	github.com/allegro/bigcache v1.1.0
 	github.com/asaskevich/govalidator v0.0.0-20180720115003-f9ffefc3facf
 	github.com/caarlos0/env v3.3.0+incompatible
 	github.com/didip/tollbooth v4.0.0+incompatible

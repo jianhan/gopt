@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/allegro/bigcache"
 	"github.com/jianhan/gopt/middleware"
 	"github.com/jianhan/gopt/place"
 	"github.com/sirupsen/logrus"
@@ -36,6 +37,12 @@ func (a *App) Run() error {
 		panic(err)
 	}
 
+	// setup cache
+	cache, cErr := bigcache.NewBigCache(bigcache.DefaultConfig(10 * time.Minute))
+	if cErr != nil {
+		panic(cErr)
+	}
+
 	// get router from handler
 	// define middleware pass into it
 	r, err := handler.NewRouter(
@@ -47,7 +54,7 @@ func (a *App) Run() error {
 		},
 		[]handler.APIRouter{
 			handler.NewUser(),
-			handler.NewPlace(googleClient),
+			handler.NewPlace(googleClient, cache),
 		},
 	)
 	if err != nil {
