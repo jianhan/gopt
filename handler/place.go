@@ -8,7 +8,6 @@ import (
 	ghttp "github.com/jianhan/gopt/http"
 	gplace "github.com/jianhan/gopt/place"
 	"github.com/leebenson/conform"
-	"github.com/sirupsen/logrus"
 	"googlemaps.github.io/maps"
 	"net/http"
 )
@@ -27,7 +26,7 @@ func (p *place) SetupSubrouter(parentRouter *mux.Router) {
 }
 
 type SearchRequest struct {
-	Name      string `conform:"trim" valid:"required~Name is required"`
+	Name      string `conform:"trim"`
 	Radius    uint
 	Location  string `conform:"trim" valid:"required~Location is required"`
 	Keyword   string `conform:"trim"`
@@ -88,13 +87,10 @@ func (s *SearchRequest) GenerateNearBySearchRequestOptions() ([]gplace.NearbySea
 }
 
 func (p *place) search(rsp http.ResponseWriter, req *http.Request) {
-
 	searchRequest := new(SearchRequest)
-	decoder := schema.NewDecoder()
-	decoder.Decode(searchRequest, req.URL.Query())
+	schema.NewDecoder().Decode(searchRequest, req.URL.Query())
 	conform.Strings(&searchRequest)
 
-	logrus.Info(len(searchRequest.GenerateNearBySearchRequestOptions()))
 	if _, vErr := govalidator.ValidateStruct(searchRequest); vErr != nil {
 		ghttp.SendJSONResponse(
 			rsp,
@@ -102,13 +98,9 @@ func (p *place) search(rsp http.ResponseWriter, req *http.Request) {
 			ghttp.HttpError{Message: vErr.Error(), Status: http.StatusBadRequest},
 		)
 		return
-		logrus.Info(vErr)
 	}
-	r, rErr := gplace.NewNearbySearchRequest(
-		gplace.NearbySearchRequestOptions{}.Location("-27.470125,153.021072"),
-		gplace.NearbySearchRequestOptions{}.Raidus(1000),
-	)
-	return
+
+	nsReq, rErr := gplace.NewNearbySearchRequest(searchRequest.GenerateNearBySearchRequestOptions()...)
 	if rErr != nil {
 		ghttp.SendJSONResponse(
 			rsp,
@@ -118,7 +110,7 @@ func (p *place) search(rsp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	sRsp, sErr := p.client.NearbySearch(req.Context(), r)
+	sRsp, sErr := p.client.NearbySearch(req.Context(), nsReq)
 	if sErr != nil {
 		ghttp.SendJSONResponse(
 			rsp,
@@ -128,5 +120,9 @@ func (p *place) search(rsp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	logrus.Info(len(sRsp.Results))
+	ghttp.SendJSONResponse(
+		rsp,
+		http.StatusOK,
+		sRsp.Results,
+	)
 }
