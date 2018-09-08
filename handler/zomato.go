@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	ghttp "github.com/jianhan/gopt/http"
 	gzomato "github.com/jianhan/gopt/zomato"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -27,7 +28,21 @@ func (z *zomato) SetupSubrouter(parentRouter *mux.Router) {
 	r.HandleFunc("/reviews", z.reviews).Name("get.zomato.reviews").Methods("GET")
 	r.HandleFunc("/restaurant", z.restaurant).Name("get.zomato.restaurant").Methods("GET")
 	r.HandleFunc("/daily-menu", z.dailyMenu).Name("get.zomato.daily-menu").Methods("GET")
+	r.HandleFunc("/cities", z.cities).Name("get.zomato.cities").Methods("GET")
 
+}
+
+func (z *zomato) cities(rsp http.ResponseWriter, req *http.Request) {
+	cities, err := z.commonAPI.Cities(&gzomato.CitiesRequest{Q: "Brisbane, QLD"})
+	if err != nil {
+		ghttp.SendJSONResponse(
+			rsp,
+			http.StatusInternalServerError,
+			ghttp.HttpError{Message: err.Error(), Status: http.StatusInternalServerError},
+		)
+		return
+	}
+	logrus.Info(cities)
 }
 
 func (z *zomato) search(rsp http.ResponseWriter, req *http.Request) {
@@ -62,6 +77,8 @@ func (z *zomato) categories(rsp http.ResponseWriter, req *http.Request) {
 			return
 		}
 		z.cache.Set(cacheKey, jsonStrRsp)
+		rsp.Write(jsonStrRsp)
+		return
 	}
 
 	rsp.Write(cachedResponse)

@@ -14,13 +14,26 @@ type Category struct {
 	Name string `json:"name"`
 }
 
+type CitiesResponse struct {
+	LocationSuggestions []City `json:"location_suggestions"`
+	Status              string `json:"status"`
+	HasMore             int    `json:"has_more"`
+	HasTotal            int    `json:"has_total"`
+}
+
 type City struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	CountryID   string `json:"country_id"`
-	CountryName string `json:"country_name"`
-	IsState     string `json:"is_state"`
-	StateID     string `json:"state_id"`
+	ID                   int    `json:"id"`
+	Name                 string `json:"name"`
+	CountryID            int    `json:"country_id"`
+	CountryName          string `json:"country_name"`
+	CountryFlagURL       string `json:"country_flag_url"`
+	ShouldExperimentWith int    `json:"should_experiment_with"`
+	DiscoveryEnabled     int    `json:"discovery_enabled"`
+	HasNewAdFormat       int    `json:"has_new_ad_format"`
+	IsState              int    `json:"is_state"`
+	StateID              int    `json:"state_id"`
+	StateName            string `json:"state_name"`
+	StateCode            string `json:"state_code"`
 }
 
 type Collection struct {
