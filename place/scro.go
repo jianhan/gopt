@@ -2,7 +2,6 @@ package place
 
 import (
 	"fmt"
-	"github.com/asaskevich/govalidator"
 	ghttp "github.com/jianhan/gopt/http"
 	"googlemaps.github.io/maps"
 	"net/http"
@@ -49,7 +48,7 @@ func (n NearbySearchRequestOptions) parsePriceLevel(fieldName, priceLevel string
 
 func (n NearbySearchRequestOptions) Raidus(radius uint) NearbySearchRequestOption {
 	return func(args *maps.NearbySearchRequest) *ghttp.HttpError {
-		if !govalidator.InRange(radius, 1, MaxRadius) {
+		if radius < 1 || radius > MaxRadius {
 			return &ghttp.HttpError{
 				Message: fmt.Sprintf("invalid radius parameter, must be greater than 1 and less than %d", MaxRadius),
 				Status:  http.StatusBadRequest,

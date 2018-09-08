@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/gorilla/mux"
 	ghttp "github.com/jianhan/gopt/http"
 	gplace "github.com/jianhan/gopt/place"
+	"github.com/sirupsen/logrus"
 	"googlemaps.github.io/maps"
 	"net/http"
 )
@@ -39,7 +41,25 @@ func (p *place) search(rsp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	r := &maps.NearbySearchRequest{}
+	r, rErr := gplace.NewNearbySearchRequest(
+		gplace.NearbySearchRequestOptions{}.Location("-27.470125,153.021072"),
+		gplace.NearbySearchRequestOptions{}.Raidus(1000),
+	)
+	if rErr != nil {
+		ghttp.SendJSONResponse(rsp, http.StatusInternalServerError, rErr)
+		logrus.Error(rErr)
+		return
+	}
 
-	client.NearbySearch(req.Context())
+	sRsp, sErr := client.NearbySearch(req.Context(), r)
+	if sErr != nil {
+		ghttp.SendJSONResponse(
+			rsp,
+			http.StatusInternalServerError,
+			ghttp.HttpError{Message: fmt.Sprintf("unable fetch search results, %s", sErr.Error()), Status: http.StatusBadRequest},
+		)
+		return
+	}
+
+	logrus.Info(len(sRsp.Results))
 }
