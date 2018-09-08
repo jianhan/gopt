@@ -14,6 +14,7 @@ require (
 	github.com/google/uuid v1.0.0 // indirect
 	github.com/googleapis/gax-go v2.0.0+incompatible // indirect
 	github.com/gorilla/mux v1.6.2
+	github.com/gorilla/schema v1.0.2
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/joho/godotenv v1.2.0
 	github.com/kisielk/errcheck v1.1.0 // indirect
