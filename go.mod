@@ -8,6 +8,7 @@ require (
 	github.com/caarlos0/env v3.3.0+incompatible
 	github.com/didip/tollbooth v4.0.0+incompatible
 	github.com/didip/tollbooth_negroni v0.0.0-20170928042109-a4e3efc33255
+	github.com/etgryphon/stringUp v0.0.0-20121020160746-31534ccd8cac // indirect
 	github.com/fsnotify/fsnotify v1.4.7 // indirect
 	github.com/fzipp/gocyclo v0.0.0-20150627053110-6acd4345c835 // indirect
 	github.com/golang/protobuf v1.2.0 // indirect
@@ -19,6 +20,7 @@ require (
 	github.com/joho/godotenv v1.2.0
 	github.com/kisielk/errcheck v1.1.0 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
+	github.com/leebenson/conform v0.0.0-20180615210222-bc2e0311fd85
 	github.com/magiconair/properties v1.8.0 // indirect
 	github.com/mholt/binding v0.3.0 // indirect
 	github.com/mitchellh/mapstructure v1.0.0 // indirect
