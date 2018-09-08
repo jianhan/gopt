@@ -25,10 +25,10 @@ func NewPlace(client *maps.Client, cache *bigcache.BigCache) APIRouter {
 
 func (p *place) SetupSubrouter(parentRouter *mux.Router) {
 	r := parentRouter.PathPrefix("/place").Subrouter().StrictSlash(true)
-	r.HandleFunc("/search", p.search).Name("get.place.search").Methods("GET")
+	r.HandleFunc("/google", p.google).Name("get.place.google").Methods("GET")
 }
 
-type SearchRequest struct {
+type GoogleSearchRequest struct {
 	Name      string `conform:"trim" json:"name"`
 	Radius    uint   `json:"radius"`
 	Location  string `conform:"trim" valid:"required~Location is required" json:"location"`
@@ -42,7 +42,7 @@ type SearchRequest struct {
 	PageToken string `schema:"page_token" conform:"trim" json:"page_token"`
 }
 
-func (s *SearchRequest) GenerateNearBySearchRequestOptions() ([]gplace.NearbySearchRequestOption) {
+func (s *GoogleSearchRequest) GenerateNearBySearchRequestOptions() ([]gplace.NearbySearchRequestOption) {
 	options := []gplace.NearbySearchRequestOption{}
 	if s.Name != "" {
 		options = append(options, gplace.NearbySearchRequestOptions{}.Name(s.Name))
@@ -89,8 +89,8 @@ func (s *SearchRequest) GenerateNearBySearchRequestOptions() ([]gplace.NearbySea
 	return options
 }
 
-func (p *place) search(rsp http.ResponseWriter, req *http.Request) {
-	searchRequest := new(SearchRequest)
+func (p *place) google(rsp http.ResponseWriter, req *http.Request) {
+	searchRequest := new(GoogleSearchRequest)
 	schema.NewDecoder().Decode(searchRequest, req.URL.Query())
 	conform.Strings(&searchRequest)
 
