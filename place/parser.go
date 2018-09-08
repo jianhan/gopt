@@ -64,4 +64,6 @@ func parsePlaceType(placeType string, r *maps.NearbySearchRequest) error {
 
 		r.Type = t
 	}
+
+	return nil
 }
